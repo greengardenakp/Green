@@ -596,4 +596,94 @@ document.addEventListener('DOMContentLoaded', () => {
 function getProductData(productCard) {
     return {
         title: productCard.querySelector('.product-title').textContent,
-        
+        price: parseFloat(productCard.querySelector('.product-price').textContent.replace('₹', '')),
+        category: productCard.querySelector('.product-category').textContent,
+        image: productCard.querySelector('.product-image').src,
+        quantity: 1
+    };
+}
+
+function addToCart(product) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existingItem = cart.find(item => item.title === product.title);
+    existingItem ? existingItem.quantity++ : cart.push(product);
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+function toggleWishlist(productCard, button) {
+    const product = getProductData(productCard);
+    let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    const index = wishlist.findIndex(item => item.title === product.title);
+    
+    if (index === -1) {
+        wishlist.push(product);
+        button.innerHTML = '<i class="fas fa-heart"></i>';
+    } else {
+        wishlist.splice(index, 1);
+        button.innerHTML = '<i class="far fa-heart"></i>';
+    }
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+}
+
+function updateWishlistButtons() {
+    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    document.querySelectorAll('.wishlist-btn').forEach(button => {
+        const productCard = button.closest('.product-card');
+        const productTitle = productCard.querySelector('.product-title').textContent;
+        button.innerHTML = wishlist.some(item => item.title === productTitle) ?
+            '<i class="fas fa-heart"></i>' :
+            '<i class="far fa-heart"></i>';
+    });
+}
+
+function filterProducts(searchTerm) {
+    document.querySelectorAll('.product-card').forEach(card => {
+        const title = card.querySelector('.product-title').textContent.toLowerCase();
+        const category = card.querySelector('.product-category').textContent.toLowerCase();
+        card.style.display = (title.includes(searchTerm) || category.includes(searchTerm)) ? 'block' : 'none';
+    });
+}
+
+let currentCategory = 'all';
+function filterByCategory() {
+    const categories = ['all', 'Flower Seeds', 'Vegetable Seeds', 'Plants', 'Fruit Plants'];
+    currentCategory = categories[(categories.indexOf(currentCategory) + 1) % categories.length];
+    
+    document.querySelectorAll('.product-card').forEach(card => {
+        const category = card.querySelector('.product-category').textContent;
+        card.style.display = (currentCategory === 'all' || category === currentCategory) ? 'block' : 'none';
+    });
+}
+
+let sortOrder = 'asc';
+function sortProducts() {
+    const grid = document.querySelector('.products-grid');
+    const cards = Array.from(grid.querySelectorAll('.product-card'));
+    
+    cards.sort((a, b) => {
+        const priceA = parseFloat(a.querySelector('.product-price').textContent.replace('₹', ''));
+        const priceB = parseFloat(b.querySelector('.product-price').textContent.replace('₹', ''));
+        return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
+    });
+    
+    sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    grid.innerHTML = '';
+    cards.forEach(card => grid.appendChild(card));
+}
+
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 2000);
+}
+
+function openProductDetails(productId) {
+    localStorage.setItem('selectedProduct', productId);
+    window.location.href = `productdetails.html?id=${productId}`;
+}
+</script>
