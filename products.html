@@ -553,7 +553,7 @@
         </div>
     </main>
 
-    <script>
+<script>
 // Cart and Wishlist functionality
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize wishlist buttons
@@ -596,7 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function getProductData(productCard) {
     return {
         title: productCard.querySelector('.product-title').textContent,
-        price: parseFloat(productCard.querySelector('.product-price').textContent.replace('₹', '')),
+     price: parseFloat(productCard.querySelector('.product-price').textContent.replace('₹', '')),
         category: productCard.querySelector('.product-category').textContent,
         image: productCard.querySelector('.product-image').src,
         quantity: 1
