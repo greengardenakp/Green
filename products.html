@@ -569,30 +569,20 @@ document.addEventListener('DOMContentLoaded', () => {
             showNotification('Product added to cart!');
         });
     });
-
-    // Wishlist functionality
-    document.querySelectorAll('.wishlist-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const productCard = this.closest('.product-card');
-            toggleWishlist(productCard, this);
-        });
-    });
-
-    // Search functionality
     document.querySelector('.search-bar input').addEventListener('input', function(e) {
         const searchTerm = e.target.value.toLowerCase();
         filterProducts(searchTerm);
     });
-
-    // Filter/Sort functionality
     document.querySelectorAll('.filter-btn').forEach((btn, index) => {
         btn.addEventListener('click', () => {
             index === 0 ? filterByCategory() : sortProducts();
         });
     });
 });
-
+function openProductDetails(productId) {
+    localStorage.setItem('selectedProduct', productId);
+    window.location.href = `productdetails.html?id=${productId}`;
+}
 function getProductData(productCard) {
     return {
         title: productCard.querySelector('.product-title').textContent,
@@ -602,40 +592,14 @@ function getProductData(productCard) {
         quantity: 1
     };
 }
-
 function addToCart(product) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     const existingItem = cart.find(item => item.title === product.title);
     existingItem ? existingItem.quantity++ : cart.push(product);
     localStorage.setItem('cart', JSON.stringify(cart));
 }
-
 function toggleWishlist(productCard, button) {
-    const product = getProductData(productCard);
-    let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-    const index = wishlist.findIndex(item => item.title === product.title);
-    
-    if (index === -1) {
-        wishlist.push(product);
-        button.innerHTML = '<i class="fas fa-heart"></i>';
-    } else {
-        wishlist.splice(index, 1);
-        button.innerHTML = '<i class="far fa-heart"></i>';
-    }
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
-}
-
-function updateWishlistButtons() {
-    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-    document.querySelectorAll('.wishlist-btn').forEach(button => {
-        const productCard = button.closest('.product-card');
-        const productTitle = productCard.querySelector('.product-title').textContent;
-        button.innerHTML = wishlist.some(item => item.title === productTitle) ?
-            '<i class="fas fa-heart"></i>' :
-            '<i class="far fa-heart"></i>';
-    });
-}
-
+   
 function filterProducts(searchTerm) {
     document.querySelectorAll('.product-card').forEach(card => {
         const title = card.querySelector('.product-title').textContent.toLowerCase();
@@ -680,11 +644,5 @@ function showNotification(message) {
     setTimeout(() => {
         notification.remove();
     }, 2000);
-}
-
-function openProductDetails(productId) {
-    // For demonstration - replace with actual product details page logic
-    localStorage.setItem('selectedProduct', productId);
-    window.location.href = `productdetails.html?id=${productId}`;
 }
 </script>
