@@ -591,16 +591,6 @@ function toggleWishlist(productCard, button) {
     localStorage.setItem('wishlist', JSON.stringify(wishlist));
 }
 
-function updateWishlistButtons() {
-    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-    document.querySelectorAll('.wishlist-btn').forEach(button => {
-        const productCard = button.closest('.product-card');
-        const productTitle = productCard.querySelector('.product-title').textContent;
-        button.innerHTML = wishlist.some(item => item.title === productTitle) ?
-            '<i class="fas fa-heart"></i>' :
-            '<i class="far fa-heart"></i>';
-    });
-}
 
 function filterProducts(searchTerm) {
     document.querySelectorAll('.product-card').forEach(card => {
@@ -649,8 +639,8 @@ function showNotification(message) {
 }
 
 function openProductDetails(productId) {
-    // For demonstration - replace with actual product details page logic
     localStorage.setItem('selectedProduct', productId);
     window.location.href = `productdetails.html?id=${productId}`;
 }
 </script>
+</html>
